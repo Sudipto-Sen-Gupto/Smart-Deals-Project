@@ -30,7 +30,7 @@ async function run(){
                
           const database= client.db("smartDB");
             const dataCollection=  database.collection("products");
-
+            const bidsCollection=database.collection('Bids')
           app.post("/products",async(req,res)=>{
             const product=req.body;
             const getProduct=await dataCollection.insertOne(product)
@@ -39,7 +39,19 @@ async function run(){
           })
             
            app.get('/products',async(req,res)=>{
-            const cursor= dataCollection.find();
+            const ascendingMaxPrice={price_max:1}
+            const projectField={title:1,price_max:1,price_min:1,category:1}
+            // const cursor= dataCollection.find().sort(ascendingMaxPrice).skip(2).limit(2).project(projectField)
+
+            
+            const email=req.query.email;
+            const query={}
+            console.log(email);
+            if(email){
+              query.email=email;
+              
+            }
+            const cursor= dataCollection.find(query)
             const result=await cursor.toArray();
              res.send(result) 
            })
@@ -73,6 +85,24 @@ async function run(){
                 const query={_id: new ObjectId(id)};
                 const result=await dataCollection.deleteOne(query)
                 res.send(result);
+             })
+
+             app.get('/bids',async(req,res)=>{
+              const email=req.query.email;
+              const query={};
+              if(email){
+                query.buyer_email=email;
+              }
+              const cursor=bidsCollection.find(query);
+              const result=await cursor.toArray();
+              res.send(result);
+             })
+
+             app.delete('bids/:id',async(req,res)=>{
+              const id=req.params.id;
+              const query={_id: new ObjectId(id)};
+              const result=await bidsCollection.deleteOne(query);
+              res.send(result)
              })
     }
 
