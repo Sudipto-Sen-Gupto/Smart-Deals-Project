@@ -8,6 +8,7 @@ import Mybids from '../../pages/mybids/Mybids';
 import Createproducts from '../../pages/createproducts/Createproducts';
 import Login from '../../pages/login/Login';
 import Register from '../../pages/register/Register';
+import Productdetail from '../productdetail/Productdetail';
 
 export const router = createBrowserRouter([{
     path:'/',
@@ -40,6 +41,12 @@ export const router = createBrowserRouter([{
         {
             path:'/register',
             Component:Register
+        }
+        ,
+        {
+            path:'/productdetails/:id',
+            Component: Productdetail,
+            loader:({params})=>fetch(`http://localhost:3000/products/${params.id}`)
         }
     ]
     
