@@ -14,6 +14,17 @@ const Login = () => {
     const pass=e.target.pass.value
        signInUser(email,pass).then(res=>{console.log(res.user)
         e.target.reset();
+         const email=res.user.email;
+            const name=res.user.displayName;
+            const photoUrl=res.user.photoURL
+            const userDetails={email,name,photoUrl}
+            fetch('http://localhost:3000/users',{
+              method:'POST',
+              headers:{
+                'content-type':'application/json'
+              },
+              body:JSON.stringify(userDetails)
+            }).then(res=>res.json).then(data=>console.log(data))
        }).then(err=>alert(err.message));
   }
 
@@ -22,8 +33,19 @@ const Login = () => {
         e.preventDefault()
          signWithGoogle().then(res=>{
             console.log(res.user);
+            const email=res.user.email;
+            const name=res.user.displayName;
+            const photoUrl=res.user.photoURL
+            const userDetails={email,name,photoUrl}
+            fetch('http://localhost:3000/users',{
+              method:'POST',
+              headers:{
+                'content-type':'application/json'
+              },
+              body:JSON.stringify(userDetails)
+            }).then(res=>res.json).then(data=>console.log(data))
          }).then(err=>{
-            alert(err.message)
+            console.log(err);
          })
     }
     return (

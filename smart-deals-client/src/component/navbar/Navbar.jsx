@@ -13,8 +13,10 @@ const Navbar = () => {
         <NavLink to={'/'}>Home</NavLink>
         <NavLink to={'/allproducts'}>All Products</NavLink>
         <NavLink to={'/myproducts'}>My products</NavLink>
-        <NavLink to={'/mybids'}>My Bids</NavLink>
-        <NavLink to={'/createproducts'}>Create Products</NavLink>
+       {
+        user && <> <NavLink to={'/mybids'}>My Bids</NavLink>
+        <NavLink to={'/createproducts'}>Create Products</NavLink></>
+       }
         
     </nav>
     return (
