@@ -6,6 +6,15 @@
 @plugin "daisyui/theme" {
   name: "light";
   default: true;
-  --color-primary: blue;
-  --color-secondary: teal;
+  --color-primary: #632EE3;
+  --color-secondary: #9F62F2;
+  --color-primary-gradient: linear-gradient(to right, #632EE3, #9F62F2);
+}
+
+.btn-primary {
+  background: var(--color-primary-gradient);
+}
+
+.btn-primary:hover{
+  opacity: .8;
 }
