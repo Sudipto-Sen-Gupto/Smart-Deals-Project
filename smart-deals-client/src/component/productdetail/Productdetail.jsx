@@ -1,14 +1,46 @@
 import { ArrowBigLeft, CloudLightning } from 'lucide-react';
-import React, { useRef } from 'react';
+import React, { use, useRef } from 'react';
 import { useLoaderData } from 'react-router';
+import { AuthContext } from '../Authprovider/Authprovider';
+import Swal from 'sweetalert2';
 
 const Productdetail = () => {
     const data=useLoaderData();
       const modal=useRef()
+     const {user}=use(AuthContext);
     const handleClick=()=>{
        modal.current.showModal()
     }
-    console.log(data);
+
+  const handleSubmit=(e)=>{
+    e.preventDefault();
+    const email=e.target.email.value;
+    const name=e.target.name.value;
+    const bid=e.target.bid.value;
+    const product=e.target.productId.value;  
+    console.log(email,name,bid,product);
+    const bidUser={email,name,bid,product};
+    fetch(`http://localhost:3000/bidsuser`,{
+      method:"POST",
+      headers:{
+        'content-type':'application/json'
+      },
+      body:JSON.stringify(bidUser)
+    }).then(res=>res.json()).then(data=>{console.log(data)
+      if(data.insertedId){
+        modal.current.close();
+        Swal.fire({
+  position: "top-end",
+  icon: "success",
+  title: "Your work has been saved",
+  showConfirmButton: false,
+  timer: 1500
+});
+      }
+    })
+  }
+
+   
     const {image,title,condition,usage,category,price_min,price_max,_id,created_at,email,seller_image,seller_contact,seller_name,description,status,location}=data;
     
     return (
@@ -59,8 +91,21 @@ const Productdetail = () => {
 
 <dialog id="my_modal_5" ref={modal} class="modal modal-bottom sm:modal-middle">
   <div class="modal-box">
-    <h3 class="text-lg font-bold">Hello!</h3>
-    <p class="py-4">Press ESC key or click the button below to close</p>
+    <fieldset class="fieldset">
+          <form onSubmit={handleSubmit} className='space-y-5'>
+            <label class="label">Email: </label>
+          <input type="email" class="input" placeholder="" name='email' defaultValue={user.email}/><br />
+          <label class="label">Name: </label>
+          <input type="text" class="input" placeholder="" name='name' defaultValue={user.displayName}/><br />
+          <label class="label">Bid: </label>
+          <input type="text" class="input" placeholder="Bid" name='bid' /><br />
+          <label class="label">Product: </label>
+          <input type="text" class="input"  name='productId' defaultValue={_id} readOnly /><br />
+         
+          <button class="btn btn-neutral mt-4">Create A product</button>
+          </form>
+        </fieldset>
+
     <div class="modal-action">
       <form method="dialog">
        
