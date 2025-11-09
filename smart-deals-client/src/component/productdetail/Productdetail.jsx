@@ -1,16 +1,20 @@
 import { ArrowBigLeft, CloudLightning } from 'lucide-react';
-import React, { use, useRef } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 import { useLoaderData } from 'react-router';
 import { AuthContext } from '../Authprovider/Authprovider';
 import Swal from 'sweetalert2';
+import Tableproduct from '../tableProduct/Tableproduct';
 
 const Productdetail = () => {
     const data=useLoaderData();
-      const modal=useRef()
+      const modal=useRef();
+      const [bids,setBids]=useState([])    
      const {user}=use(AuthContext);
     const handleClick=()=>{
        modal.current.showModal()
     }
+
+ const {image,title,condition,usage,category,price_min,price_max,_id,created_at,email,seller_image,seller_contact,seller_name,description,status,location}=data;
 
   const handleSubmit=(e)=>{
     e.preventDefault();
@@ -31,18 +35,34 @@ const Productdetail = () => {
         modal.current.close();
         Swal.fire({
   position: "top-end",
-  icon: "success",
+  icon: "success", 
   title: "Your work has been saved",
   showConfirmButton: false,
   timer: 1500
 });
+
+         bidUser._id=data.insertedId;
+         const newBidUser=[...bids,bidUser];
+         
+         newBidUser.sort((a,b)=>a.bid-b.bid)
+         setBids(newBidUser);
       }
     })
   }
 
    
-    const {image,title,condition,usage,category,price_min,price_max,_id,created_at,email,seller_image,seller_contact,seller_name,description,status,location}=data;
     
+    
+    
+
+     useEffect(()=>{
+      fetch(`http://localhost:3000/biduser/${_id}`).then(res=>res.json()).then(dat=>{
+        console.log(dat);
+       
+          setBids(dat)           
+      })
+     },[_id])
+
     return (
         <div >
             <div className='grid grid-cols-1 md:grid-cols-12 gap-10'>
@@ -94,9 +114,9 @@ const Productdetail = () => {
     <fieldset class="fieldset">
           <form onSubmit={handleSubmit} className='space-y-5'>
             <label class="label">Email: </label>
-          <input type="email" class="input" placeholder="" name='email' defaultValue={user.email}/><br />
+          <input type="email" class="input" placeholder="" name='email' defaultValue={user?.email}/><br />
           <label class="label">Name: </label>
-          <input type="text" class="input" placeholder="" name='name' defaultValue={user.displayName}/><br />
+          <input type="text" class="input" placeholder="" name='name' defaultValue={user?.displayName}/><br />
           <label class="label">Bid: </label>
           <input type="text" class="input" placeholder="Bid" name='bid' /><br />
           <label class="label">Product: </label>
@@ -119,8 +139,13 @@ const Productdetail = () => {
             </div>
 
 
-            <div>
+            <div  className='my-8'>
+                  <h1>Bids for the products :<span>{bids.length}</span> </h1>
+                 <div>
 
+                  <Tableproduct bids={bids}></Tableproduct>
+                 
+                 </div>
             </div>
         </div>
     );
